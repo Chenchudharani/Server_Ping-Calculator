@@ -23,13 +23,13 @@
             margin-top: 20px;
             display: flex;
             justify-content: center;
-            gap: 20px; /* Space between result boxes */
+            gap: 20px;
         }
         .result {
             display: flex;
             flex-direction: column; 
             align-items: center; 
-            width: 300px; /* Adjusted width for better layout */
+            width: 300px; 
             padding: 15px; 
             border: 2px solid #007bff; 
             border-radius: 10px;
@@ -38,7 +38,7 @@
             overflow: hidden; 
         }
         .ping-results {
-            background-color: #d1e7dd; /* Light green */
+            background-color: #d1e7dd; 
             padding: 10px;
         }
         .metric-box {
@@ -53,7 +53,7 @@
             background: #fff;
         }
         .speed-results {
-            background-color: #f8d7da; /* Light red */
+            background-color: #f8d7da; 
             padding: 10px;
         }
         .circular-meter {
@@ -89,13 +89,13 @@
         }
         .spinner {
             display: none;
-            border: 8px solid #f3f3f3; /* Light grey */
-            border-top: 8px solid #007bff; /* Blue */
+            border: 8px solid #f3f3f3; 
+            border-top: 8px solid #007bff; 
             border-radius: 50%;
             width: 50px;
             height: 50px;
             animation: spin 1s linear infinite;
-            margin: 20px auto; /* Center spinner */
+            margin: 20px auto; 
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -114,55 +114,7 @@
     <div class="spinner" id="spinner"></div>
 
     <div id="resultArea">
-        <!-- Ping Results Box -->
-        <div class="result ping-results">
-            <h2>Ping Results</h2>
-            <div class="metric-box">
-                <div class="value">{{ results.packet_loss|floatformat:2 }}%</div>
-                <div class="unit">Packet Loss</div>
-            </div>
-            <div class="metric-box">
-                <div class="value">{{ results.average_ping|floatformat:2 }} ms</div>
-                <div class="unit">Average Ping</div>
-            </div>
-            <div class="metric-box">
-                <div class="value">{{ results.jitter|floatformat:2 }} ms</div>
-                <div class="unit">Jitter</div>
-            </div>
-            <div class="metric-box">
-                <div class="value">{{ results.destination_ip }}</div>
-                <div class="unit">Destination IP</div>
-            </div>
-            <div class="metric-box">
-                <div class="value">{{ results.source_ip }}</div>
-                <div class="unit">Source IP</div>
-            </div>
-        </div>
-
-        <!-- Speed Test Results Box -->
-        <div class="result speed-results">
-            <h2>Speed Test Results</h2>
-            <div class="circular-meter" style="background: conic-gradient(#007bff {{ speed_test_results.download_speed|floatformat:2 }}%, #e9ecef {{ speed_test_results.download_speed|floatformat:2 }}% 100%);">
-                <div class="value">{{ speed_test_results.download_speed|floatformat:2 }} Mbps</div>
-            </div>
-            <div class="unit">Download Speed</div>
-            <div class="circular-meter" style="background: conic-gradient(#007bff {{ speed_test_results.upload_speed|floatformat:2 }}%, #e9ecef {{ speed_test_results.upload_speed|floatformat:2 }}% 100%);">
-                <div class="value">{{ speed_test_results.upload_speed|floatformat:2 }} Mbps</div>
-            </div>
-            <div class="unit">Upload Speed</div>
-            <div class="metric-box">
-                <div class="value">{{ speed_test_results.latency }} ms</div>
-                <div class="unit">Server Ping</div>
-            </div>
-            <div class="metric-box">
-                <div class="value">{{ speed_test_results.server }}</div>
-                <div class="unit">Server</div>
-            </div>
-            <div class="metric-box">
-                <div class="value">{{ speed_test_results.location }}</div>
-                <div class="unit">Location</div>
-            </div>
-        </div>
+        <!-- Results will be injected here by JavaScript -->
     </div>
 
     <script>
@@ -170,8 +122,8 @@
         const spinner = document.getElementById('spinner');
 
         form.onsubmit = function(event) {
-            event.preventDefault(); // Prevent default form submission
-            spinner.style.display = 'block'; // Show spinner
+            event.preventDefault();
+            spinner.style.display = 'block';
 
             const formData = new FormData(form);
             
@@ -184,7 +136,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                spinner.style.display = 'none'; // Hide spinner
+                spinner.style.display = 'none';
 
                 // Clear previous results
                 document.getElementById('resultArea').innerHTML = '';
@@ -248,7 +200,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                spinner.style.display = 'none'; // Hide spinner
+                spinner.style.display = 'none';
             });
         };
     </script>

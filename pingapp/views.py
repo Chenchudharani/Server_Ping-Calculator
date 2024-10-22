@@ -10,7 +10,9 @@ def ping_view(request):
         form = PingForm(request.POST)
         if form.is_valid():
             target = form.cleaned_data['target']
-            results = send_icmp_echo(target, 20)
+            user_ip = get_user_ip(request)  # Get user's IP
+            server_ip = socket.gethostbyname(socket.gethostname())  # Server's IP
+            results = send_icmp_echo(server_ip, target, 20, user_ip)  # Pass the user's IP
             speed_test_results = perform_speed_test()
             return JsonResponse({
                 'results': results,
@@ -23,20 +25,24 @@ def ping_view(request):
         'form': form,
     })
 
-def send_icmp_echo(target, count):
+def get_user_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        return x_forwarded_for.split(',')[0]  # Get the first IP in the list
+    return request.META.get('REMOTE_ADDR')  # Fallback to REMOTE_ADDR
+
+def send_icmp_echo(server_ip, target, count, user_ip):
     sent_count = 0
     received_count = 0
     latencies = []
-    
+
     try:
         destination_ip = socket.gethostbyname(target)
     except socket.error:
         destination_ip = "Unable to resolve"
 
-    source_ip = socket.gethostbyname(socket.gethostname())
-
     for i in range(count):
-        packet = IP(dst=destination_ip) / ICMP()
+        packet = IP(src=user_ip, dst=destination_ip) / ICMP()  # Set the source IP to the user's IP
         response = sr1(packet, verbose=0)
 
         sent_count += 1
@@ -55,7 +61,7 @@ def send_icmp_echo(target, count):
         'received_count': received_count,
         'ping_times': latencies,
         'jitter': jitter,
-        'source_ip': source_ip,
+        'source_ip': user_ip,
         'destination_ip': destination_ip,
     }
 
