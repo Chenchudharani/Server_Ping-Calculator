@@ -6,12 +6,13 @@ import socket
 import speedtest
 
 def ping_view(request):
+    server_ip = socket.gethostbyname(socket.gethostname())  # Get the server's IP
+
     if request.method == 'POST':
         form = PingForm(request.POST)
         if form.is_valid():
-            target = form.cleaned_data['target']
+            target = form.cleaned_data['target'] or server_ip  # Use server IP if target is empty
             user_ip = get_user_ip(request)  # Get user's IP
-            server_ip = socket.gethostbyname(socket.gethostname())  # Server's IP
             results = send_icmp_echo(server_ip, target, 20, user_ip)  # Pass the user's IP
             speed_test_results = perform_speed_test()
             return JsonResponse({
@@ -19,10 +20,11 @@ def ping_view(request):
                 'speed_test_results': speed_test_results,
             })
     else:
-        form = PingForm()
+        form = PingForm(initial={'target': server_ip})  # Set server IP as default target
 
     return render(request, 'pingapp/ping.html', {
         'form': form,
+        'server_ip': server_ip,  # Pass server IP to the template
     })
 
 def get_user_ip(request):

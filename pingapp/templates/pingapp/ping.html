@@ -107,9 +107,11 @@
     <h1>Speed Calculator</h1>
     <form id="pingForm" method="post">
         {% csrf_token %}
+        <p>Server IP: {{ server_ip }}</p>
         {{ form.as_p }}
         <button type="submit">Ping</button>
     </form>
+    
 
     <div class="spinner" id="spinner"></div>
 
